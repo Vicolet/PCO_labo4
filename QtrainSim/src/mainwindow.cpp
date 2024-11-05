@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
     while(!ligne.startsWith("EOF"))
     {
 #ifdef USING_QT5
-        ligneDecoupee = ligne.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
+        ligneDecoupee = ligne.split(QRegExp("\\s+"));
 #else
         ligneDecoupee = ligne.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
 #endif
@@ -604,7 +604,7 @@ void MainWindow::chargerMaquette(QString filename)
 
     ligne = lecture.readLine();
 
-    listeTemporaire = ligne.split(" ", Qt::SkipEmptyParts);
+    listeTemporaire = ligne.split(" ");
 
     limite = listeTemporaire.at(0).toInt(&premiereInfoValide);
 
@@ -614,7 +614,7 @@ void MainWindow::chargerMaquette(QString filename)
             qDebug() << "Erreur de lecture de fichier : fichier non standard. (nombre de voies mal indique)";
         ligne = lecture.readLine();
 
-        listeTemporaire = ligne.split(" ", Qt::SkipEmptyParts);
+        listeTemporaire = ligne.split(" ");
 
         limite = listeTemporaire.at(0).toInt(&premiereInfoValide);
 
@@ -635,7 +635,7 @@ void MainWindow::chargerMaquette(QString filename)
     {
         ligne = lecture.readLine();
 
-        listeTemporaire = ligne.split(" ", Qt::SkipEmptyParts);
+        listeTemporaire = ligne.split(" ");
 
         IDvoie = listeTemporaire.at(0).toInt();
 
@@ -789,7 +789,7 @@ void MainWindow::chargerMaquette(QString filename)
     {
         ligne = lecture.readLine();
 
-        listeTemporaire = ligne.split(" ", Qt::SkipEmptyParts);
+        listeTemporaire = ligne.split(" ");
 
         //creation des contacts.
         c = new Contact(listeTemporaire.at(0).toInt(), listeTemporaire.at(1).toInt());
@@ -806,7 +806,7 @@ void MainWindow::chargerMaquette(QString filename)
     {
         ligne = lecture.readLine();
 
-        listeTemporaire = ligne.split(" ", Qt::SkipEmptyParts);
+        listeTemporaire = ligne.split(" ");
 
         VoieVariable *v=dynamic_cast<VoieVariable *>(IDVoies[listeTemporaire.at(1).toInt()]);
 

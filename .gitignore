@@ -16,3 +16,8 @@ code/.idea/
 .idea
 .vscode
 trainsim1.0.pdf
+QtrainSim
+build
+cmake-build-debug
+QtrainSim/src/mainwindow.cpp
+QtrainSim
