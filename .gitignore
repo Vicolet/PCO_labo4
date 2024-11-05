@@ -1,0 +1,17 @@
+# Ignorer la consigne du laboratoire
+labo4.pdf
+
+# Ignorer les dossiers de construction
+code/build/
+code/cmake-build-debug/
+
+# Ignorer les fichiers de configuration IDE
+code/.idea/
+
+# Ignorer le fichier CMakeList.txt
+**/CMakeLists.txt
+
+
+
+.idea
+.vscode

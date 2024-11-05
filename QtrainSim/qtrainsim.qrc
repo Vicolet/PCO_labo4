@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/zoomin.png</file>
+        <file>images/zoomout.png</file>
+        <file>images/simulate_start.png</file>
+        <file>images/simulate_end.png</file>
+        <file>images/simulate_break.png</file>
+        <file>images/simulate_step.png</file>
+        <file>images/simulate_msteps.png</file>
+        <file>images/simulate_msteps_update.png</file>
+        <file>images/simulate_run.png</file>
+        <file>images/simulate_restart.png</file>
+        <file>images/simulate_reset.png</file>
+        <file>images/explosion.png</file>
+        <file>sound/explosion.wav</file>
+    </qresource>
+</RCC>
