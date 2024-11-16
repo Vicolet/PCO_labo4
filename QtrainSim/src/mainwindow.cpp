@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
     while(!ligne.startsWith("EOF"))
     {
 #ifdef USING_QT5
-        ligneDecoupee = ligne.split(QRegExp("\\s+"));
+        ligneDecoupee = ligne.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
 #else
         ligneDecoupee = ligne.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
 #endif
@@ -130,8 +130,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setGeometry(50,50,530,580);
     locoSignalMapper = new QSignalMapper(this);
-    CONNECT(locoSignalMapper, SIGNAL(mapped(QObject *)),
-            this, SLOT(toggleLoco(QObject *)));
+    CONNECT(locoSignalMapper, &QSignalMapper::mappedObject,
+            this, &MainWindow::toggleLoco);
 
     setGeometry(0,0,530,580);
 
@@ -249,7 +249,7 @@ void MainWindow::toggleSimulation()
         toggleSimAct->setText(tr("&Pause"));
         toggleSimAct->setShortcut(tr("Ctrl+P"));
         toggleSimAct->setStatusTip(tr("Pause the simulation"));
-        toggleSimAct->setIcon(QIcon(QPixmap("images/simulate_break.png")));
+        toggleSimAct->setIcon(QIcon(QPixmap(":/images/simulate_break.png")));
         statusLabel->setText(tr("Running"));
         m_state=RUNNING;
     }
@@ -259,7 +259,7 @@ void MainWindow::toggleSimulation()
         toggleSimAct->setText(tr("&Resume"));
         toggleSimAct->setShortcut(tr("Ctrl+R"));
         toggleSimAct->setStatusTip(tr("Resume the simulation"));
-        toggleSimAct->setIcon(QIcon(QPixmap("images/simulate_start.png")));
+        toggleSimAct->setIcon(QIcon(QPixmap(":/images/simulate_start.png")));
         m_state=PAUSE;
         statusLabel->setText(tr("Pause"));
     }
@@ -299,14 +299,14 @@ void MainWindow::setLocoState(LocoCtrl *loco,LocoCtrl::STATE state)
             loco->ptrLoco->setActive(false);
             loco->toggle->setText(tr("Restart the loco %1").arg(loco->loco));
             loco->toggle->setStatusTip(tr("Restart the loco %1").arg(loco->loco));
-            loco->toggle->setIcon(QIcon(QPixmap("images/simulate_start.png")));
+            loco->toggle->setIcon(QIcon(QPixmap(":/images/simulate_start.png")));
     } break;
         case LocoCtrl::RUNNING: {
             loco->state=LocoCtrl::RUNNING;
             loco->ptrLoco->setActive(true);
             loco->toggle->setText(QString("Pause loco %1").arg(loco->loco));
             loco->toggle->setStatusTip(tr("Pause the loco"));
-            loco->toggle->setIcon(QIcon(QPixmap("images/simulate_break.png")));
+            loco->toggle->setIcon(QIcon(QPixmap(":/images/simulate_break.png")));
     } break;
     }
 }
@@ -382,7 +382,7 @@ void MainWindow::createActions()
     exitAct = new QAction(tr("E&xit"), this);
     exitAct->setShortcut(tr("Ctrl+Q"));
     exitAct->setStatusTip(tr("Exit the application"));
-    exitAct->setIcon(QIcon(QPixmap("images/simulate_exit.png")));
+    exitAct->setIcon(QIcon(QPixmap(":/images/simulate_exit.png")));
     CONNECT(exitAct, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
 
     printAct = new QAction(tr("&Print"), this);
@@ -393,17 +393,17 @@ void MainWindow::createActions()
     toggleSimAct = new QAction(tr("&Pause"), this);
     toggleSimAct->setShortcut(tr("Ctrl+P"));
     toggleSimAct->setStatusTip(tr("Pause the simulation"));
-    toggleSimAct->setIcon(QIcon(QPixmap("images/simulate_break.png")));
+    toggleSimAct->setIcon(QIcon(QPixmap(":/images/simulate_break.png")));
     CONNECT(toggleSimAct, SIGNAL(triggered()), this, SLOT(toggleSimulation()));
 
     emergencyStopAct = new QAction(tr("&Emergency stop"),this);
     emergencyStopAct->setShortcut(tr("Ctrl+E"));
     emergencyStopAct->setStatusTip(tr("Executes an emergency stop. Has to be implemented by the students"));
-    emergencyStopAct->setIcon(QIcon(QPixmap("images/simulate_end.png")));
+    emergencyStopAct->setIcon(QIcon(QPixmap(":/images/simulate_end.png")));
     CONNECT(emergencyStopAct, SIGNAL(triggered()), this, SLOT(emergencyStop()));
 
 
-/*    QPixmap pix("images/simulate_start.png");
+/*    QPixmap pix(":/images/simulate_start.png");
     QPainter painter(&pix);
     painter.drawText(QRectF(26,0,7,12),"1");
 
@@ -604,7 +604,7 @@ void MainWindow::chargerMaquette(QString filename)
 
     ligne = lecture.readLine();
 
-    listeTemporaire = ligne.split(" ");
+    listeTemporaire = ligne.split(" ", Qt::SkipEmptyParts);
 
     limite = listeTemporaire.at(0).toInt(&premiereInfoValide);
 
@@ -614,7 +614,7 @@ void MainWindow::chargerMaquette(QString filename)
             qDebug() << "Erreur de lecture de fichier : fichier non standard. (nombre de voies mal indique)";
         ligne = lecture.readLine();
 
-        listeTemporaire = ligne.split(" ");
+        listeTemporaire = ligne.split(" ", Qt::SkipEmptyParts);
 
         limite = listeTemporaire.at(0).toInt(&premiereInfoValide);
 
@@ -635,7 +635,7 @@ void MainWindow::chargerMaquette(QString filename)
     {
         ligne = lecture.readLine();
 
-        listeTemporaire = ligne.split(" ");
+        listeTemporaire = ligne.split(" ", Qt::SkipEmptyParts);
 
         IDvoie = listeTemporaire.at(0).toInt();
 
@@ -789,7 +789,7 @@ void MainWindow::chargerMaquette(QString filename)
     {
         ligne = lecture.readLine();
 
-        listeTemporaire = ligne.split(" ");
+        listeTemporaire = ligne.split(" ", Qt::SkipEmptyParts);
 
         //creation des contacts.
         c = new Contact(listeTemporaire.at(0).toInt(), listeTemporaire.at(1).toInt());
@@ -806,7 +806,7 @@ void MainWindow::chargerMaquette(QString filename)
     {
         ligne = lecture.readLine();
 
-        listeTemporaire = ligne.split(" ");
+        listeTemporaire = ligne.split(" ", Qt::SkipEmptyParts);
 
         VoieVariable *v=dynamic_cast<VoieVariable *>(IDVoies[listeTemporaire.at(1).toInt()]);
 

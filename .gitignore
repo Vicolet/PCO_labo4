@@ -8,8 +8,6 @@ code/cmake-build-debug/
 # Ignorer les fichiers de configuration IDE
 code/.idea/
 
-# Ignorer le fichier CMakeList.txt
-**/CMakeLists.txt
 
 
 
