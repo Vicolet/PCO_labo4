@@ -19,7 +19,7 @@ void LocomotiveBehavior::run() {
     // Vous pouvez appeler les méthodes de la section partagée comme ceci :
     //sharedSection->access(loco);
     //sharedSection->leave(loco);
-
+    
     while (true) {
         // On attend qu'une locomotive arrive sur le contact 1.
         // Pertinent de faire ça dans les deux threads? Pas sûr...

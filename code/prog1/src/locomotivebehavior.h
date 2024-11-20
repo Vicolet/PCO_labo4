@@ -22,11 +22,16 @@ public:
      * \param loco la locomotive dont on représente le comportement
      */
     LocomotiveBehavior(
-        Locomotive &loco, std::shared_ptr<SharedSectionInterface> sharedSection,
-        std::pair<int, int> delimitorsCS, const int station,
-        std::map<int, int> aiguillagesChanges /*, autres paramètres éventuels */)
-        : loco(loco), sharedSection(sharedSection), delimitorsCS(delimitorsCS),
-          station(station), aiguillagesChanges(aiguillagesChanges) {
+        Locomotive &loco,
+        std::shared_ptr<SharedSectionInterface> sharedSection,
+        std::pair<int, int> delimitorsCS,
+        const int station,
+        std::map<int, int> aiguillagesChanges /*, autres paramètres éventuels */
+    ) : loco(loco),
+        sharedSection(sharedSection),
+        delimitorsCS(delimitorsCS),
+        station(station),
+        aiguillagesChanges(aiguillagesChanges) {
         // Eventuel code supplémentaire du constructeur
     }
 
