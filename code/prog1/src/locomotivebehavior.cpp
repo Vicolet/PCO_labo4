@@ -25,6 +25,26 @@ void LocomotiveBehavior::run()
         // Pertinent de faire ça dans les deux threads? Pas sûr...
         attendre_contact(1);
         loco.afficherMessage("J'ai atteint le contact 1");
+
+        // Attente en gare
+        attendre_contact(station);
+        sharedSection->stopAtStation(loco);
+
+        // Entrée dans la SC
+        attendre_contact(delimitorsCS.first);
+        loco.afficherMessage("J'ai atteint la section commune");
+        sharedSection->access(loco);
+        loco.afficherMessage("En route dans la section commune");
+
+        //Faire tous les changements d'aiguillages nécessaires pour passer en SC
+        for (auto change: aiguillagesChanges) {
+            diriger_aiguillage(change.first, change.second, 0);
+        }
+
+        // Sortie de la SC
+        attendre_contact(delimitorsCS.second);
+        loco.afficherMessage("Je quitte la section commune");
+        sharedSection->leave(loco);
     }
 }
 

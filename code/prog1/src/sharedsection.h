@@ -27,9 +27,12 @@ public:
      * @brief SharedSection Constructeur de la classe qui représente la section partagée.
      * Initialisez vos éventuels attributs ici, sémaphores etc.
      */
-    SharedSection() {
+    SharedSection(): semaphore(1) {
         // TODO
     }
+
+    void access(Locomotive &loco) override;
+    void leave(Locomotive &loco) override;
 
     /**
      * @brief access Méthode à appeler pour accéder à la section partagée, doit arrêter la
@@ -41,6 +44,9 @@ public:
      */
     void access(Locomotive &loco) override {
         // TODO
+
+        loco.afficherMessage("Demande d'accès à la section partagée.");
+        semaphore.acquire(); // Attente si la section est occupée
 
         // Exemple de message dans la console globale
         afficher_message(qPrintable(QString("The engine no. %1 accesses the shared section.").arg(loco.numero())));
@@ -54,6 +60,9 @@ public:
     void leave(Locomotive& loco) override {
         // TODO
 
+          afficher_message(qPrintable(QString("La locomotive %1 quitte la section partagée.").arg(loco.numero())));
+        semaphore.release(); // Libération de la section
+
         // Exemple de message dans la console globale
         afficher_message(qPrintable(QString("The engine no. %1 leaves the shared section.").arg(loco.numero())));
     }
@@ -64,6 +73,7 @@ private:
 
     // Méthodes privées ...
     // Attribut privés ...
+    PcoSemaphore semaphore;
 };
 
 
