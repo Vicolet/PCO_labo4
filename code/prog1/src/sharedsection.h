@@ -31,9 +31,6 @@ public:
         // TODO
     }
 
-    void access(Locomotive &loco) override;
-    void leave(Locomotive &loco) override;
-
     /**
      * @brief access Méthode à appeler pour accéder à la section partagée, doit arrêter la
      * locomotive et mettre son thread en attente si la section est occupée par une autre locomotive.
@@ -59,8 +56,7 @@ public:
      */
     void leave(Locomotive& loco) override {
         // TODO
-
-          afficher_message(qPrintable(QString("La locomotive %1 quitte la section partagée.").arg(loco.numero())));
+        loco.afficherMessage("Demande d'accès à la section partagée.");
         semaphore.release(); // Libération de la section
 
         // Exemple de message dans la console globale

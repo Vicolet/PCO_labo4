@@ -7,6 +7,7 @@
 #include "locomotivebehavior.h"
 #include "ctrain_handler.h"
 
+
 void LocomotiveBehavior::run()
 {
     //Initialisation de la locomotive
@@ -28,7 +29,8 @@ void LocomotiveBehavior::run()
 
         // Attente en gare
         attendre_contact(station);
-        sharedSection->stopAtStation(loco);
+        loco.afficherMessage("Arrêt en gare");
+        std::this_thread::sleep_for(std::chrono::seconds(2)); // Pause pour passagers
 
         // Entrée dans la SC
         attendre_contact(delimitorsCS.first);
