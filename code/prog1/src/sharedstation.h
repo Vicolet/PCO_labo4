@@ -6,12 +6,21 @@
 class SharedStation
 {
 public:
-    SharedStation(int nbTrains, int nbTours);
-
+    
+ SharedStation(int nbTrains, int nbTours)
+        : trainsArrives(0),
+          totalTrains(nbTrains),
+          toursParTrain(nbTours),
+          semaphore(0)
+    {}
     /* Implémentez toute la logique que vous avez besoin pour que les locomotives
      * s'attendent correctement à la station */
 
-     void attendreGare();
+    void attendreGare();
+
+    int getNbTrains() const { return totalTrains; }
+
+
 
 private:
     /* TODO */

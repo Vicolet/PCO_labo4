@@ -69,7 +69,12 @@ private:
 
     // Méthodes privées ...
     // Attribut privés ...
-    PcoSemaphore semaphore;
+    PcoMutex mutex;
+    bool isUsed;
+    int premierAiguillageHoraire;
+    int secondAiguillageHoraire;
+    int premierAiguillageAntiHoraire;
+    int secondAiguillageAntiHoraire;
 };
 
 
