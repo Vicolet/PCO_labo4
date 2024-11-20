@@ -42,13 +42,13 @@ set(HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/sharedsection.h
 )
 
-qt_add_resources(SOURCES ../../QtrainSim/qtrainsim.qrc)
+#qt_add_resources(SOURCES ../../QtrainSim/qtrainsim.qrc)
 
 add_executable(PCO_LAB04_prog2 ${SOURCES} ${HEADERS})
 
 
 if (Qt5_FOUND)
-    target_link_libraries(PCO_LAB04_prog2 PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport qtrainsim -lpcosynchro)
+    target_link_libraries(PCO_LAB04_prog2 PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport qtrainsim -lpcosynchro -pthread)
 else()
     target_link_libraries(PCO_LAB04_prog2 PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::PrintSupport Qt6::Core5Compat qtrainsim -lpcosynchro)
 endif()

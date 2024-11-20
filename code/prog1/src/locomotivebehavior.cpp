@@ -8,8 +8,7 @@
 #include "ctrain_handler.h"
 
 
-void LocomotiveBehavior::run()
-{
+void LocomotiveBehavior::run() {
     //Initialisation de la locomotive
     loco.allumerPhares();
     loco.demarrer();
@@ -21,7 +20,7 @@ void LocomotiveBehavior::run()
     //sharedSection->access(loco);
     //sharedSection->leave(loco);
 
-    while(true) {
+    while (true) {
         // On attend qu'une locomotive arrive sur le contact 1.
         // Pertinent de faire ça dans les deux threads? Pas sûr...
         attendre_contact(1);
@@ -50,14 +49,12 @@ void LocomotiveBehavior::run()
     }
 }
 
-void LocomotiveBehavior::printStartMessage()
-{
+void LocomotiveBehavior::printStartMessage() {
     qDebug() << "[START] Thread de la loco" << loco.numero() << "lancé";
     loco.afficherMessage("Je suis lancée !");
 }
 
-void LocomotiveBehavior::printCompletionMessage()
-{
+void LocomotiveBehavior::printCompletionMessage() {
     qDebug() << "[STOP] Thread de la loco" << loco.numero() << "a terminé correctement";
     loco.afficherMessage("J'ai terminé");
 }

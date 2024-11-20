@@ -9,49 +9,54 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(Qt5 COMPONENTS Core Gui Test Widgets PrintSupport)
 if (NOT Qt5_FOUND)
     find_package(Qt6 COMPONENTS Core Gui Test Widgets PrintSupport Core5Compat REQUIRED)
-endif()
+endif ()
 
 find_library(QTRAINSIM_LIB qtrainsim PATHS ${CMAKE_CURRENT_BUILD_DIR}/QtrainSim/)
 
 if (Qt5_FOUND)
     add_definitions(-DUSING_QT5)
-else()
+else ()
     add_definitions(-DUSING_QT6)
-endif()
+endif ()
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 
-
 include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/internal
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 # Liste des fichiers sources avec chemins complets
 set(SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/sharedstation.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/locomotive.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/cppmain.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/locomotivebehavior.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/sharedstation.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/locomotive.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/cppmain.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/locomotivebehavior.cpp
 )
 
 set(HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/sharedstation.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/sharedsectioninterface.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/locomotive.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/launchable.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/locomotivebehavior.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/sharedsection.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/sharedstation.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/sharedsectioninterface.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/locomotive.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/launchable.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/locomotivebehavior.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/sharedsection.h
 )
 
-qt_add_resources(SOURCES ../../QtrainSim/qtrainsim.qrc)
+set(FORMS
+        ${CMAKE_CURRENT_SOURCE_DIR}/ui/dialog.ui
+)
+
+#Fqt_add_resources(SOURCES ../../QtrainSim/qtrainsim.qrc)
 
 add_executable(PCO_LAB04_prog1 ${SOURCES} ${HEADERS})
 
 
 if (Qt5_FOUND)
-    target_link_libraries(PCO_LAB04_prog1 PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport qtrainsim -lpcosynchro)
-else()
+    target_link_libraries(PCO_LAB04_prog1 PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport qtrainsim -lpcosynchro -pthread)
+else ()
     target_link_libraries(PCO_LAB04_prog1 PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::PrintSupport Qt6::Core5Compat qtrainsim -lpcosynchro)
-endif()
+endif ()
 
 file(COPY ../../QtrainSim/data DESTINATION ${CMAKE_BINARY_DIR}/code/prog1)
+file(COPY ../../QtrainSim/images DESTINATION ${CMAKE_BINARY_DIR}/code/prog1)
