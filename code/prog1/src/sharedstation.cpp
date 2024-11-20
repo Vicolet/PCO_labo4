@@ -11,11 +11,11 @@
 
 SharedStation::SharedStation(int nbTrains, int nbTours)
     : trainsArrives(0), totalTrains(nbTrains), toursParTrain(nbTours),
-      semaphore(0) {}
+      semaphore(0), mutex(1) {}
 
 void SharedStation::attendreGare() {
   {
-    mutex.lock();
+    mutex.acquire();
     trainsArrives++;
 
     // Si tous les trains sont arrivés
@@ -25,7 +25,7 @@ void SharedStation::attendreGare() {
       }
       trainsArrives = 0; // Réinitialise le compteur
     } else {
-      mutex.unlock();      // Libère le verrou avant d'attendre
+      mutex.release();      // Libère le verrou avant d'attendre
       semaphore.acquire(); // Attend les autres trains
     }
   }
