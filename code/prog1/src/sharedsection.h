@@ -20,14 +20,18 @@
  * @brief La classe SharedSection implémente l'interface SharedSectionInterface qui
  * propose les méthodes liées à la section partagée.
  */
-class SharedSection final : public SharedSectionInterface {
+class SharedSection final : public SharedSectionInterface
+{
 public:
+
     /**
      * @brief SharedSection Constructeur de la classe qui représente la section partagée.
      * Initialisez vos éventuels attributs ici, sémaphores etc.
      */
-    SharedSection(): semaphore(1) {
+    SharedSection() {
         // TODO
+        section_semaphore.release();
+        isUsed = false;
     }
 
     /**
@@ -40,10 +44,17 @@ public:
      */
     void access(Locomotive &loco) override {
         // TODO
-        loco.afficherMessage("Demande d'accès à la section partagée.");
-        semaphore.acquire(); // Attente si la section est occupée
-        loco.afficherMessage("Accès accordé à la section partagée.");
-        afficher_message(qPrintable(QString("La locomotive %1 entre dans la section partagée.").arg(loco.numero())));
+        section_mutex.lock();
+        if(isUsed) {
+            loco.arreter();
+            section_mutex.unlock();
+        }
+        section_semaphore.acquire();
+        loco.demarrer();
+        isUsed = true;
+        section_mutex.unlock();
+        // Exemple de message dans la console globale
+        afficher_message(qPrintable(QString("The engine no. %1 accesses the shared section.").arg(loco.numero())));
     }
 
     /**
@@ -51,25 +62,26 @@ public:
      * partagée. (reveille les threads des locomotives potentiellement en attente).
      * @param loco La locomotive qui quitte la section partagée
      */
-    void leave(Locomotive &loco) override {
+    void leave(Locomotive& loco) override {
         // TODO
-        loco.afficherMessage("Demande d'accès à la section partagée.");
-        semaphore.release(); // Libération de la section
-        afficher_message(qPrintable(QString("La locomotive %1 quitte la section partagée.").arg(loco.numero())));
+        section_mutex.lock();
+        isUsed = false;
+        section_semaphore.release();
+        section_mutex.unlock();
+        // Exemple de message dans la console globale
+        afficher_message(qPrintable(QString("The engine no. %1 leaves the shared section.").arg(loco.numero())));
     }
 
 private:
+
     /* A vous d'ajouter ce qu'il vous faut */
+
+    bool isUsed = false;
+    PcoSemaphore section_semaphore;
+    PcoMutex section_mutex;
 
     // Méthodes privées ...
     // Attribut privés ...
-    PcoMutex mutex;
-    PcoSemaphore semaphore;
-    bool isUsed;
-    int premierAiguillageHoraire;
-    int secondAiguillageHoraire;
-    int premierAiguillageAntiHoraire;
-    int secondAiguillageAntiHoraire;
 };
 
 

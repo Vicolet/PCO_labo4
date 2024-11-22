@@ -8,24 +8,34 @@
 #include <thread>
 
 #include "sharedstation.h"
-/*
-SharedStation::SharedStation(int nbTrains, int nbTours)
-    : trainsArrives(0), totalTrains(nbTrains), toursParTrain(nbTours),
-      semaphore(0), mutex(1) {}
-*/
-void SharedStation::attendreGare() {
-    mutex.acquire();
-    trainsArrives++;
 
-    if (trainsArrives == totalTrains) {
-        for (int i = 0; i < totalTrains - 1; ++i) {
-            semaphore.release();
-        }
-        trainsArrives = 0;
+SharedStation::SharedStation(int nbTrains): waiting_at_station_semaphore(0), goingToStation(1) { // Initialize semaphores
+    waitingLocos = false; // Initialize boolean
+}
+
+
+void SharedStation::waitingAtStation(Locomotive& loco)
+{
+    loco.arreter();
+    loco.inverserSens(); // Inverse la direction de la locomotive
+    loco.afficherMessage("Loco " + QString::number(loco.numero()) + " inversée, attend en gare...");
+
+    goingToStation.acquire();
+    if (waitingLocos) {
+        // Si une autre locomotive est déjà en attente, libère cette locomotive après 3 secondes
+        loco.afficherMessage("Une loco est déjà en gare");
+        waitingLocos = false;
+        goingToStation.release();
+        std::this_thread::sleep_for(std::chrono::seconds(2)); // Temps d'attente pour passagers
+        waiting_at_station_semaphore.release(); // Libère la première locomotive
     } else {
-        mutex.release();
-        semaphore.acquire();
+        // Première locomotive arrivée, elle attend la seconde
+        loco.afficherMessage("Je suis la première");
+        waitingLocos = true;
+        goingToStation.release();
+        waiting_at_station_semaphore.acquire(); // Attente de libération par la seconde locomotive
     }
 
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    loco.demarrer();
+    loco.afficherMessage("Je repars !");
 }

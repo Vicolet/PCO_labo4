@@ -2,33 +2,20 @@
 #define SHARED_STATION_H
 
 #include <pcosynchro/pcosemaphore.h>
+#include "locomotive.h"
 
 class SharedStation
 {
 public:
-    
- SharedStation(int nbTrains, int nbTours)
-        : trainsArrives(0),
-          totalTrains(nbTrains),
-          toursParTrain(nbTours),
-          semaphore(0)
-    {}
-    /* Implémentez toute la logique que vous avez besoin pour que les locomotives
-     * s'attendent correctement à la station */
+    SharedStation(int nbTrains);
 
-    void attendreGare();
-
-    int getNbTrains() const { return totalTrains; }
-
-
+    void waitingAtStation(Locomotive& loco);
 
 private:
     /* TODO */
-    int trainsArrives;           // Nombre de trains arrivés en gare.
-    const int totalTrains;       // Nombre total de trains attendus.
-    const int toursParTrain;     // Nombre de tours avant l'attente en gare.
-    PcoSemaphore mutex;            // Protège l'accès à `trainsArrives`.
-    PcoSemaphore semaphore;      // Synchronise les trains en gare.
+    bool waitingLocos;
+    PcoSemaphore waiting_at_station_semaphore;
+    PcoSemaphore goingToStation;
 };
 
 #endif // SHARED_STATION_H
