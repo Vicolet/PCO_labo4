@@ -28,14 +28,14 @@ void LocomotiveBehavior::run() {
             if (directionAvant) {
                 // Logic for moving forward
                 attendre_contact(22);
-                sharedSection->access(loco, 1);
+                sharedSection->access(loco, priority);
 
                 attendre_contact(12);
                 sharedSection->leave(loco);
             } else {
                 // Logic for moving in reverse direction
                 attendre_contact(11);
-                sharedSection->access(loco,1);
+                sharedSection->access(loco,priority);
 
                 attendre_contact(20);
                 sharedSection->leave(loco);
@@ -48,13 +48,13 @@ void LocomotiveBehavior::run() {
             if (nbToursLoco42 >= N1) {
                 directionAvant = !directionAvant; // Toggle the direction flag
                 nbToursLoco42 = 0; // Reset the loop counter
-                sharedStation.waitingAtStation(loco);
+                sharedStation->waitingAtStation(loco);
             }
         } else if (loco.numero() == 7) {
             if (directionAvant) {
                 // Logic for moving forward
                 attendre_contact(25);
-                sharedSection->access(loco,2);
+                sharedSection->access(loco, priority);
                 diriger_aiguillage(10, DEVIE, 0);
                 diriger_aiguillage(13, DEVIE, 0);
 
@@ -65,7 +65,7 @@ void LocomotiveBehavior::run() {
             } else {
                 // Logic for moving in reverse direction
                 attendre_contact(14);
-                sharedSection->access(loco, 2);
+                sharedSection->access(loco, priority);
                 diriger_aiguillage(10, DEVIE, 0);
                 diriger_aiguillage(13, DEVIE, 0);
 
@@ -80,7 +80,7 @@ void LocomotiveBehavior::run() {
             if (nbToursLoco7 >= N2) {
                 directionAvant = !directionAvant; // Toggle the direction flag
                 nbToursLoco7 = 0; // Reset the loop counter
-                sharedStation.waitingAtStation(loco);
+                sharedStation->waitingAtStation(loco);
             }
         }
     }
