@@ -16,3 +16,4 @@ build
 cmake-build-debug
 QtrainSim/src/mainwindow.cpp
 
+consignes.pdf
