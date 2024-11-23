@@ -27,12 +27,9 @@ public:
      * @brief SharedSection Constructeur de la classe qui représente la section partagée.
      * Initialisez vos éventuels attributs ici, sémaphores etc.
      */
-    SharedSection(): semaphore(1) {
+    SharedSection(int premierAiguillageHoraire, int secondAiguillageHoraire, int premierAiguillageAntiHoraire, int secondAiguillageAntiHoraire) {
         // TODO
     }
-
-    void access(Locomotive &loco) override;
-    void leave(Locomotive &loco) override;
 
     /**
      * @brief access Méthode à appeler pour accéder à la section partagée, doit arrêter la
@@ -45,10 +42,22 @@ public:
     void access(Locomotive &loco) override {
         // TODO
 
-        loco.afficherMessage("Demande d'accès à la section partagée.");
-        semaphore.acquire(); // Attente si la section est occupée
+         CSMutex.acquire();
+        //Tant que ce n'est pas libre et qu'on est pas la prochaine locomotive à pouvoir traverser la SC
+        while (!CSFree || loco.priority != nbLocoLeavedCS) {
+            CSMutex.release();
+            loco.arreter();
+            loco.afficherMessage(qPrintable(QString("Je ne suis PAS prioritaire (priority = %1) donc j'attends !").arg(loco.priority)));
+            CSAccess.acquire();
+            CSMutex.acquire();
+        }
+        CSFree = false;
+        CSMutex.release();
 
-        // Exemple de message dans la console globale
+        loco.demarrer();
+
+        loco.afficherMessage(qPrintable(QString("Je suis prioritaire (priority = %1) pour la SC").arg(loco.priority)));
+
         afficher_message(qPrintable(QString("The engine no. %1 accesses the shared section.").arg(loco.numero())));
     }
 
@@ -60,10 +69,17 @@ public:
     void leave(Locomotive& loco) override {
         // TODO
 
-          afficher_message(qPrintable(QString("La locomotive %1 quitte la section partagée.").arg(loco.numero())));
-        semaphore.release(); // Libération de la section
+          CSMutex.acquire();
+        nbLocoLeavedCS = ++nbLocoLeavedCS % TOTAL_NB_LOCOS;
+        int nbLocoWaitingToGiveAChance = TOTAL_NB_LOCOS - nbLocoLeavedCS;
+        CSFree = true;
+        CSMutex.release();
 
-        // Exemple de message dans la console globale
+        //Si nous ne sommes pas la dernière locomotive, on libère toutes les locomotives qui sont en attente
+        for (int i = 0; i < nbLocoWaitingToGiveAChance; i++) {
+            CSAccess.release();
+        }
+
         afficher_message(qPrintable(QString("The engine no. %1 leaves the shared section.").arg(loco.numero())));
     }
 
@@ -73,7 +89,25 @@ private:
 
     // Méthodes privées ...
     // Attribut privés ...
-    PcoSemaphore semaphore;
+    //Permet la gestion de l'entrée et sortie en section critique
+    bool CSFree = true;//whether the critical section is free
+    PcoSemaphore CSAccess{0};
+    int nbLocoLeavedCS = 0;
+    PcoSemaphore CSMutex{1};
+
+    //Permet l'attente de l'autre locomotive en gare
+    PcoSemaphore stationWait{0};
+
+    //Permet la gestion des priorités et l'attente commune en gare
+    int nbLocoWaiting = 0;
+    PcoSemaphore stationMutex{1};
+    const int TOTAL_NB_LOCOS = 2;
+
+
+    int premierAiguillageHoraire;
+    int secondAiguillageHoraire;
+    int premierAiguillageAntiHoraire;
+    int secondAiguillageAntiHoraire;
 };
 
 

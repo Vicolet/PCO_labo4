@@ -98,7 +98,7 @@ int cmain()
      ********************/
 
     // Création de la section partagée
-    std::shared_ptr<SharedSectionInterface> sharedSection = std::make_shared<SharedSection>();
+    std::shared_ptr<SharedSectionInterface> sharedSection = std::make_shared<SharedSection>(2, 22, 21, 1);
 
     // Création du thread pour la loco 0
     std::unique_ptr<Launchable> locoBehaveA = std::make_unique<LocomotiveBehavior>(locoA, sharedSection /*, autres paramètres ...*/);

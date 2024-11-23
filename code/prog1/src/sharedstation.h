@@ -18,7 +18,7 @@ private:
     int trainsArrives;           // Nombre de trains arrivés en gare.
     const int totalTrains;       // Nombre total de trains attendus.
     const int toursParTrain;     // Nombre de tours avant l'attente en gare.
-    std::mutex mutex;            // Protège l'accès à `trainsArrives`.
+    PcoSemaphore mutex;            // Protège l'accès à `trainsArrives`.
     PcoSemaphore semaphore;      // Synchronise les trains en gare.
     
     
