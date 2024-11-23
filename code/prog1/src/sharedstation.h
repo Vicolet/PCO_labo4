@@ -25,9 +25,9 @@ public:
 
 private:
     /* TODO */
-    bool locosEnAttente; // Indique si des locomotives attendent à la station
     PcoSemaphore semaphoreAttenteStation; // Sémaphore pour gérer l'attente des locomotives
     PcoSemaphore semaphoreEntreeStation; // Sémaphore pour gérer l'entrée des locomotives
+    bool locosEnAttente; // Indique si des locomotives attendent à la station
 };
 
 #endif // SHARED_STATION_H

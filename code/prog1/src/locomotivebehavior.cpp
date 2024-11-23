@@ -18,9 +18,9 @@ void LocomotiveBehavior::run() {
 
     int toursLoco42 = 0; // Nombre de tours effectués par la locomotive 42
     int toursLoco7 = 0; // Nombre de tours effectués par la locomotive 7
-    bool estDirectionAvant = true; // Direction de la locomotive (true = avant, false = arrière)
     const int maxToursLoco42 = 1; // Nombre maximal de tours avant de changer de direction pour la loco 42
     const int maxToursLoco7 = 2; // Nombre maximal de tours avant de changer de direction pour la loco 7
+    bool estDirectionAvant = true; // Direction de la locomotive (true = avant, false = arrière)
 
     // Boucle principale pour gérer les locomotives
     while (!PcoThread::thisThread()->stopRequested()) {
