@@ -2,17 +2,16 @@
 //   / _ \/ ___/ __ \  |_  |/ _ \|_  / / / //
 //  / ___/ /__/ /_/ / / __// // / __/_  _/ //
 // /_/   \___/\____/ /____/\___/____//_/   //
-//
 
 #include <chrono>
 #include <thread>
 
 #include "sharedstation.h"
 
-SharedStation::SharedStation(int nbTrains): waiting_at_station_semaphore(0), goingToStation(1) { // Initialize semaphores
-    waitingLocos = false; // Initialize boolean
+SharedStation::SharedStation(int nbTrains)
+    : semaphoreAttenteStation(0), semaphoreEntreeStation(1) { // Initialisation des sémaphores
+    locosEnAttente = false; // Initialisation du booléen
 }
-
 
 void SharedStation::waitingAtStation(Locomotive& loco)
 {
@@ -20,22 +19,22 @@ void SharedStation::waitingAtStation(Locomotive& loco)
     loco.inverserSens(); // Inverse la direction de la locomotive
     loco.afficherMessage("Loco " + QString::number(loco.numero()) + " inversée, attend en gare...");
 
-    goingToStation.acquire();
-    if (waitingLocos) {
-        // Si une autre locomotive est déjà en attente, libère cette locomotive après 3 secondes
-        loco.afficherMessage("Une loco est déjà en gare");
-        waitingLocos = false;
-        goingToStation.release();
+    semaphoreEntreeStation.acquire();
+    if (locosEnAttente) {
+        // Si une autre locomotive est déjà en attente, libère cette locomotive après 2 secondes
+        loco.afficherMessage("Une locomotive est déjà en gare");
+        locosEnAttente = false;
+        semaphoreEntreeStation.release();
         std::this_thread::sleep_for(std::chrono::seconds(2)); // Temps d'attente pour passagers
-        waiting_at_station_semaphore.release(); // Libère la première locomotive
+        semaphoreAttenteStation.release(); // Libère la première locomotive
     } else {
         // Première locomotive arrivée, elle attend la seconde
-        loco.afficherMessage("Je suis la première");
-        waitingLocos = true;
-        goingToStation.release();
-        waiting_at_station_semaphore.acquire(); // Attente de libération par la seconde locomotive
+        loco.afficherMessage("Je suis la première locomotive arrivée en gare");
+        locosEnAttente = true;
+        semaphoreEntreeStation.release();
+        semaphoreAttenteStation.acquire(); // Attente de libération par la seconde locomotive
     }
 
     loco.demarrer();
-    loco.afficherMessage("Je repars !");
+    loco.afficherMessage("La locomotive " + QString::number(loco.numero()) + " repart !");
 }

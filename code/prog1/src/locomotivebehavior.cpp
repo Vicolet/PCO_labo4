@@ -16,24 +16,24 @@ void LocomotiveBehavior::run() {
 
     /* A vous de jouer ! */
 
-    int nbToursLoco7 = 0, nbToursLoco42 = 0;
-    bool directionAvant = true; // Track direction (true = forward, false = backward)
-    const int N1 = 1;
-    const int N2 = 2;
+    int toursLoco42 = 0; // Nombre de tours effectués par la locomotive 42
+    int toursLoco7 = 0; // Nombre de tours effectués par la locomotive 7
+    bool estDirectionAvant = true; // Direction de la locomotive (true = avant, false = arrière)
+    const int maxToursLoco42 = 1; // Nombre maximal de tours avant de changer de direction pour la loco 42
+    const int maxToursLoco7 = 2; // Nombre maximal de tours avant de changer de direction pour la loco 7
 
-    // Vous pouvez appeler les méthodes de la section partagée comme ceci :
-
+    // Boucle principale pour gérer les locomotives
     while (!PcoThread::thisThread()->stopRequested()) {
         if (loco.numero() == 42) {
-            if (directionAvant) {
-                // Logic for moving forward
+            if (estDirectionAvant) {
+                // Logique pour la loco 42 en marche avant
                 attendre_contact(22);
                 sharedSection->access(loco);
 
                 attendre_contact(12);
                 sharedSection->leave(loco);
             } else {
-                // Logic for moving in reverse direction
+                // Logique pour la loco 42 en marche arrière
                 attendre_contact(11);
                 sharedSection->access(loco);
 
@@ -41,18 +41,18 @@ void LocomotiveBehavior::run() {
                 sharedSection->leave(loco);
             }
 
-            // Increment loop counter and check if we need to reverse direction
+            // Incrémenter le compteur de tours et vérifier si la direction doit changer
             attendre_contact(1);
-            nbToursLoco42++;
-            loco.afficherMessage("Loco 42: J'ai fait : " + QString::number(nbToursLoco42) + " tours");
-            if (nbToursLoco42 >= N1) {
-                directionAvant = !directionAvant; // Toggle the direction flag
-                nbToursLoco42 = 0; // Reset the loop counter
+            toursLoco42++;
+            loco.afficherMessage("Loco 42: J'ai fait : " + QString::number(toursLoco42) + " tours");
+            if (toursLoco42 >= maxToursLoco42) {
+                estDirectionAvant = !estDirectionAvant; // Inverser la direction
+                toursLoco42 = 0; // Réinitialiser le compteur de tours
                 sharedStation.waitingAtStation(loco);
             }
         } else if (loco.numero() == 7) {
-            if (directionAvant) {
-                // Logic for moving forward
+            if (estDirectionAvant) {
+                // Logique pour la loco 7 en marche avant
                 attendre_contact(25);
                 sharedSection->access(loco);
                 diriger_aiguillage(10, DEVIE, 0);
@@ -63,7 +63,7 @@ void LocomotiveBehavior::run() {
                 diriger_aiguillage(13, TOUT_DROIT, 0);
                 sharedSection->leave(loco);
             } else {
-                // Logic for moving in reverse direction
+                // Logique pour la loco 7 en marche arrière
                 attendre_contact(14);
                 sharedSection->access(loco);
                 diriger_aiguillage(10, DEVIE, 0);
@@ -74,12 +74,13 @@ void LocomotiveBehavior::run() {
                 diriger_aiguillage(10, TOUT_DROIT, 0);
                 diriger_aiguillage(13, TOUT_DROIT, 0);
             }
+
             attendre_contact(5);
-            nbToursLoco7++;
-            loco.afficherMessage("Loco 7: J'ai fait : " + QString::number(nbToursLoco7) + " tours");
-            if (nbToursLoco7 >= N2) {
-                directionAvant = !directionAvant; // Toggle the direction flag
-                nbToursLoco7 = 0; // Reset the loop counter
+            toursLoco7++;
+            loco.afficherMessage("Loco 7: J'ai fait : " + QString::number(toursLoco7) + " tours");
+            if (toursLoco7 >= maxToursLoco7) {
+                estDirectionAvant = !estDirectionAvant; // Inverser la direction
+                toursLoco7 = 0; // Réinitialiser le compteur de tours
                 sharedStation.waitingAtStation(loco);
             }
         }
