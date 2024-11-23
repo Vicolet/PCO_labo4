@@ -28,14 +28,14 @@ void LocomotiveBehavior::run() {
             if (directionAvant) {
                 // Logic for moving forward
                 attendre_contact(22);
-                sharedSection->access(loco);
+                sharedSection->access(loco, 1);
 
                 attendre_contact(12);
                 sharedSection->leave(loco);
             } else {
                 // Logic for moving in reverse direction
                 attendre_contact(11);
-                sharedSection->access(loco);
+                sharedSection->access(loco,1);
 
                 attendre_contact(20);
                 sharedSection->leave(loco);
@@ -54,7 +54,7 @@ void LocomotiveBehavior::run() {
             if (directionAvant) {
                 // Logic for moving forward
                 attendre_contact(25);
-                sharedSection->access(loco);
+                sharedSection->access(loco,2);
                 diriger_aiguillage(10, DEVIE, 0);
                 diriger_aiguillage(13, DEVIE, 0);
 
@@ -65,7 +65,7 @@ void LocomotiveBehavior::run() {
             } else {
                 // Logic for moving in reverse direction
                 attendre_contact(14);
-                sharedSection->access(loco);
+                sharedSection->access(loco, 2);
                 diriger_aiguillage(10, DEVIE, 0);
                 diriger_aiguillage(13, DEVIE, 0);
 
