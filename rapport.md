@@ -9,6 +9,8 @@ Ce laboratoire a pour but de simuler le fonctionnement d'un réseau ferroviaire 
 
 La gestion d'entrée dans le tronçon commun est accordé à la locomotive qui a une priorité supérieur à l'autre. Si les deux locomotives ont la même priorité, alors elle sera accordée à la première arrivée sur le tronçon commun.
 
+![parcours-choisi.png](/imgs/parcours-choisi.jpg)
+
 ## Choix d'implémentation
 
 ### Gestion de l'attente en gare
