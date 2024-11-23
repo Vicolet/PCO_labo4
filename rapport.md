@@ -9,7 +9,7 @@ Ce laboratoire a pour but de simuler le fonctionnement d'un réseau ferroviaire 
 
 La gestion d'entrée dans le tronçon commun est accordé à la locomotive qui a une priorité supérieur à l'autre. Si les deux locomotives ont la même priorité, alors elle sera accordée à la première arrivée sur le tronçon commun.
 
-![parcours-choisi.png](/imgs/parcours-choisi.jpg)
+![parcours-choisi](/imgs/parcours-choisi.jpg)
 
 ## Choix d'implémentation
 
@@ -35,4 +35,14 @@ Ce mécanisme évite les conditions de course (data races) et garantit une synch
 
 ### Gestion de la priorité
 
-## Tests effectués
+## Tests effectués A CHANGER SELON LA SITUATION
+
+Nous avons exécuté notre programme en gardant l'inertie et laissé quelques tours pour vérifier que toutes les contraintes étaient fonctionnelles.
+
+D'abord on voit que la priorité et l'attente sont respecté, la loco 42 attend bien avant l'entrée de la section critique et part dès que la loco 7 a quitté la section critique.
+
+
+Nous voyons ici que la loco 7 arrivant après, est bien laissée prioritaire pour la section critique.
+
+On voit également que les aiguillages 13 et 10 ont bien été switchés pour cette loco.
+![aiguillage](/imgs/aiguillage.png)
