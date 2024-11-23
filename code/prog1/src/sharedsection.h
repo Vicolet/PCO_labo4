@@ -20,10 +20,8 @@
  * @brief La classe SharedSection implémente l'interface SharedSectionInterface qui
  * propose les méthodes liées à la section partagée.
  */
-class SharedSection final : public SharedSectionInterface
-{
+class SharedSection final : public SharedSectionInterface {
 public:
-
     /**
      * @brief SharedSection Constructeur de la classe qui représente la section partagée.
      * Initialisez vos éventuels attributs ici, sémaphores etc.
@@ -45,7 +43,7 @@ public:
     void access(Locomotive &loco) override {
         // TODO
         section_mutex.lock();
-        if(isUsed) {
+        if (isUsed) {
             loco.arreter();
             section_mutex.unlock();
         }
@@ -62,7 +60,7 @@ public:
      * partagée. (reveille les threads des locomotives potentiellement en attente).
      * @param loco La locomotive qui quitte la section partagée
      */
-    void leave(Locomotive& loco) override {
+    void leave(Locomotive &loco) override {
         // TODO
         section_mutex.lock();
         isUsed = false;
@@ -73,15 +71,11 @@ public:
     }
 
 private:
-
     /* A vous d'ajouter ce qu'il vous faut */
 
     bool isUsed = false;
     PcoSemaphore section_semaphore;
     PcoMutex section_mutex;
-
-    // Méthodes privées ...
-    // Attribut privés ...
 };
 
 

@@ -8,23 +8,22 @@
 #include "ctrain_handler.h"
 #include "sharedstation.h"
 
-void LocomotiveBehavior::run()
-{
+void LocomotiveBehavior::run() {
     //Initialisation de la locomotive
     loco.allumerPhares();
     loco.demarrer();
     loco.afficherMessage("Ready!");
 
-    int nbToursLoco7 = 0, nbToursLoco42 = 0; // Track number of completed loops
-    bool directionAvant = true; // Track direction (true = forward, false = backward)
-    const int N1 = 1; // Define N1 loops before reversing direction (customize for each locomotive)
-    const int N2 = 4;
-
     /* A vous de jouer ! */
+
+    int nbToursLoco7 = 0, nbToursLoco42 = 0;
+    bool directionAvant = true; // Track direction (true = forward, false = backward)
+    const int N1 = 1;
+    const int N2 = 2;
 
     // Vous pouvez appeler les méthodes de la section partagée comme ceci :
 
-    while(!PcoThread::thisThread()->stopRequested()) {
+    while (!PcoThread::thisThread()->stopRequested()) {
         if (loco.numero() == 42) {
             if (directionAvant) {
                 // Logic for moving forward
@@ -33,7 +32,6 @@ void LocomotiveBehavior::run()
 
                 attendre_contact(12);
                 sharedSection->leave(loco);
-
             } else {
                 // Logic for moving in reverse direction
                 attendre_contact(11);
@@ -52,31 +50,29 @@ void LocomotiveBehavior::run()
                 nbToursLoco42 = 0; // Reset the loop counter
                 sharedStation.waitingAtStation(loco);
             }
-        }
-        else if (loco.numero() == 7) {
+        } else if (loco.numero() == 7) {
             if (directionAvant) {
                 // Logic for moving forward
                 attendre_contact(25);
                 sharedSection->access(loco);
-                diriger_aiguillage(10, DEVIE,0);
-                diriger_aiguillage(13, DEVIE,0);
+                diriger_aiguillage(10, DEVIE, 0);
+                diriger_aiguillage(13, DEVIE, 0);
 
                 attendre_contact(15);
-                diriger_aiguillage(10, TOUT_DROIT,0);
-                diriger_aiguillage(13, TOUT_DROIT,0);
+                diriger_aiguillage(10, TOUT_DROIT, 0);
+                diriger_aiguillage(13, TOUT_DROIT, 0);
                 sharedSection->leave(loco);
-
             } else {
                 // Logic for moving in reverse direction
                 attendre_contact(14);
                 sharedSection->access(loco);
-                diriger_aiguillage(10, DEVIE,0);
-                diriger_aiguillage(13, DEVIE,0);
+                diriger_aiguillage(10, DEVIE, 0);
+                diriger_aiguillage(13, DEVIE, 0);
 
                 attendre_contact(24);
                 sharedSection->leave(loco);
-                diriger_aiguillage(10, TOUT_DROIT,0);
-                diriger_aiguillage(13, TOUT_DROIT,0);
+                diriger_aiguillage(10, TOUT_DROIT, 0);
+                diriger_aiguillage(13, TOUT_DROIT, 0);
             }
             attendre_contact(5);
             nbToursLoco7++;
@@ -90,14 +86,12 @@ void LocomotiveBehavior::run()
     }
 }
 
-void LocomotiveBehavior::printStartMessage()
-{
+void LocomotiveBehavior::printStartMessage() {
     qDebug() << "[START] Thread de la loco" << loco.numero() << "lancé";
     loco.afficherMessage("Je suis lancée !");
 }
 
-void LocomotiveBehavior::printCompletionMessage()
-{
+void LocomotiveBehavior::printCompletionMessage() {
     qDebug() << "[STOP] Thread de la loco" << loco.numero() << "a terminé correctement";
     loco.afficherMessage("J'ai terminé");
 }
