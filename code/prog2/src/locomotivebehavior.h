@@ -53,6 +53,22 @@ protected:
     Locomotive &loco;
 
     /**
+     * @brief moveForward Déplace la locomotive dans la direction avant
+     * \param nbTours Nombre de tours effectués
+     * \param maxTours Nombre maximum de tours avant changement de direction
+     * \param directionAvant Référence à la direction actuelle
+     */
+    void moveForward(int &nbTours, int maxTours, bool &directionAvant);
+
+    /**
+     * @brief moveBackward Déplace la locomotive dans la direction arrière
+     * \param nbTours Nombre de tours effectués
+     * \param maxTours Nombre maximum de tours avant changement de direction
+     * \param directionAvant Référence à la direction actuelle
+     */
+    void moveBackward(int &nbTours, int maxTours, bool &directionAvant);
+
+    /**
      * @brief sharedSection Pointeur sur la section partagée
      */
     std::shared_ptr<SharedSectionInterface> sharedSection;
@@ -67,8 +83,6 @@ protected:
 private:
     std::shared_ptr<SharedStation> sharedStation;
     int priority; // Priorité de la locomotive
-    void moveForward(int &nbTours, int maxTours, bool &directionAvant); // Correction : ajout des paramètres
-    void moveBackward(int &nbTours, int maxTours, bool &directionAvant); // Correction : ajout des paramètres
 };
 
 #endif // LOCOMOTIVEBEHAVIOR_H
