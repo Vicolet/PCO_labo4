@@ -1,12 +1,20 @@
+//    ___  _________    ___  ___  ___ ____ //
+//   / _ \/ ___/ __ \  |_  |/ _ \|_  / / / //
+//  / ___/ /__/ /_/ / / __// // / __/_  _/ //
+// /_/   \___/\____/ /____/\___/____//_/   //
+
 #ifndef SHAREDSECTION_H
 #define SHAREDSECTION_H
 
 #include <queue>
 #include <QDebug>
+
 #include <pcosynchro/pcosemaphore.h>
 #include <pcosynchro/pcomutex.h>
-#include "sharedsectioninterface.h"
+
 #include "locomotive.h"
+#include "ctrain_handler.h"
+#include "sharedsectioninterface.h"
 
 /**
  * @brief Classe gérant l'accès à la section partagée avec gestion des priorités et des aiguillages.

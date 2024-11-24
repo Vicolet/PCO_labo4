@@ -28,8 +28,8 @@ public:
                        std::shared_ptr<SharedSectionInterface> sharedSection,
                        std::shared_ptr<SharedStation> sharedStation,
                        int priority)
-        : loco(loco), sharedSection(sharedSection), sharedStation(sharedStation), priority(priority) {}
-
+        : loco(loco), sharedSection(sharedSection), sharedStation(sharedStation), priority(priority) {
+    }
 
 protected:
     /*!
@@ -67,8 +67,8 @@ protected:
 private:
     std::shared_ptr<SharedStation> sharedStation;
     int priority; // Priorité de la locomotive
-    void moveForward(int& nbTours, int maxTours, bool& directionAvant); // Correction : ajout des paramètres
-    void moveBackward(int& nbTours, int maxTours, bool& directionAvant); // Correction : ajout des paramètres
+    void moveForward(int &nbTours, int maxTours, bool &directionAvant); // Correction : ajout des paramètres
+    void moveBackward(int &nbTours, int maxTours, bool &directionAvant); // Correction : ajout des paramètres
 };
 
 #endif // LOCOMOTIVEBEHAVIOR_H
