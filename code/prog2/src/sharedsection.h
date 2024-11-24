@@ -1,8 +1,3 @@
-//    ___  _________    ___  ___  ___ ____ //
-//   / _ \/ ___/ __ \  |_  |/ _ \|_  / / / //
-//  / ___/ /__/ /_/ / / __// // / __/_  _/ //
-// /_/   \___/\____/ /____/\___/____//_/   //
-
 #ifndef SHAREDSECTION_H
 #define SHAREDSECTION_H
 
@@ -10,7 +5,6 @@
 #include <QDebug>
 
 #include <pcosynchro/pcosemaphore.h>
-#include <pcosynchro/pcomutex.h>
 
 #include "locomotive.h"
 #include "ctrain_handler.h"
@@ -21,44 +15,46 @@
  */
 class SharedSection : public SharedSectionInterface {
 public:
-    SharedSection() : isUsed(false), section_semaphore(1) {}
+    SharedSection() : isUsed(false), mutexSection(1), semaphoreSection(0) {}
 
     /**
      * @brief Une locomotive demande l'accès à la section.
      */
     void request(Locomotive& loco, int priority) override {
-        std::lock_guard<PcoMutex> lock(section_mutex);
+        mutexSection.acquire(); // Protège l'accès à la file des demandes
         requests.emplace(priority, loco.numero());
         afficher_message(qPrintable(QString("Locomotive %1 demande l'accès avec priorité %2.")
-                                    .arg(loco.numero()).arg(priority)));
+                                         .arg(loco.numero()).arg(priority)));
+        mutexSection.release();
+        semaphoreSection.release(); // Indique qu'une nouvelle demande est disponible
     }
 
     /**
      * @brief Une locomotive tente d'accéder à la section.
      */
     void access(Locomotive& loco, int priority) override {
+        mutexSection.acquire(); // Protège l'accès aux ressources critiques
         while (true) {
-            {
-                std::lock_guard<PcoMutex> lock(section_mutex);
 
-                // Vérifie si la locomotive peut accéder à la section (priorité, aiguillage)
-                if (!isUsed && canAccess(priority, loco.numero())) {
-                    isUsed = true;
-                    currentLoco = loco.numero();
-                    removeRequest(loco.numero());
+            // Vérifie si la locomotive peut accéder à la section
+            if (!isUsed && canAccess(priority, loco.numero())) {
+                isUsed = true;
+                currentLoco = loco.numero();
+                removeRequest(loco.numero());
 
-                    // Configurer les aiguillages pour la locomotive
-                    configureSwitchesForLoco(loco);
+                // Configurer les aiguillages pour la locomotive
+                configureSwitchesForLoco(loco);
 
-                    afficher_message(qPrintable(QString("Locomotive %1 accède à la section partagée.")
-                                                .arg(loco.numero())));
-                    break;
-                }
+                afficher_message(qPrintable(QString("Locomotive %1 accède à la section partagée.")
+                                                 .arg(loco.numero())));
+                mutexSection.release();
+                break;
             }
 
-            // Attend que la section soit disponible
+            // Si la locomotive ne peut pas accéder, libère l'accès et attend
+            mutexSection.release();
             loco.afficherMessage("En attente d'accès à la section partagée...");
-            section_semaphore.acquire();
+            semaphoreSection.acquire(); // Attend une notification d'accès disponible
         }
     }
 
@@ -66,25 +62,23 @@ public:
      * @brief Une locomotive quitte la section.
      */
     void leave(Locomotive& loco) override {
-        {
-            std::lock_guard<PcoMutex> lock(section_mutex);
+        mutexSection.acquire(); // Protège l'accès aux ressources critiques
 
-            isUsed = false;
-            currentLoco = -1;
+        isUsed = false;
+        currentLoco = -1;
 
-            afficher_message(qPrintable(QString("Locomotive %1 quitte la section partagée.")
-                                        .arg(loco.numero())));
-        }
+        afficher_message(qPrintable(QString("Locomotive %1 quitte la section partagée.")
+                                         .arg(loco.numero())));
 
-        // Libère la prochaine locomotive en attente
-        section_semaphore.release();
+        mutexSection.release();
+        semaphoreSection.release(); // Notifie une locomotive en attente
     }
 
     /**
      * @brief Change le mode de priorité.
      */
     void togglePriorityMode() override {
-        std::lock_guard<PcoMutex> lock(section_mutex);
+        mutexSection.acquire(); // Protège l'accès à la modification
         if (priorityMode == PriorityMode::HIGH_PRIORITY) {
             priorityMode = PriorityMode::LOW_PRIORITY;
             afficher_message("Mode de priorité bas activé.");
@@ -92,6 +86,7 @@ public:
             priorityMode = PriorityMode::HIGH_PRIORITY;
             afficher_message("Mode de priorité haut activé.");
         }
+        mutexSection.release();
     }
 
 private:
@@ -131,7 +126,6 @@ private:
      */
     void configureSwitchesForLoco(Locomotive& loco) {
         if (loco.numero() == 7) {
-            // Exemple de configuration des aiguillages pour la locomotive 7
             diriger_aiguillage(10, DEVIE, 0);
             diriger_aiguillage(13, DEVIE, 0);
             afficher_message("Aiguillages configurés pour locomotive 7.");
@@ -143,12 +137,12 @@ private:
         }
     }
 
-    bool isUsed; ///< Indique si la section est utilisée
-    int currentLoco = -1; ///< ID de la locomotive actuelle
-    PriorityMode priorityMode = PriorityMode::HIGH_PRIORITY; ///< Mode de gestion des priorités
-    PcoSemaphore section_semaphore; ///< Sémaphore pour gérer l'attente
-    PcoMutex section_mutex; ///< Mutex pour protéger les ressources critiques
-    std::priority_queue<std::pair<int, int>> requests; ///< File des demandes d'accès (priorité, ID locomotive)
+    bool isUsed; // Indique si la section est utilisée
+    int currentLoco = -1; // ID de la locomotive actuelle
+    PriorityMode priorityMode = PriorityMode::HIGH_PRIORITY; // Mode de gestion des priorités
+    PcoSemaphore mutexSection; // Sémaphore pour protéger l'accès aux ressources critiques
+    PcoSemaphore semaphoreSection; // Sémaphore pour gérer les locomotives en attente
+    std::priority_queue<std::pair<int, int>> requests; // File des demandes d'accès (priorité, ID locomotive)
 };
 
 #endif // SHAREDSECTION_H
