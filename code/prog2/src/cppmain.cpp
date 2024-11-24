@@ -108,9 +108,10 @@ int cmain() {
     int priorityLocoB = 2; // Priorité plus basse
 
     // Création des threads avec les priorités
+    // Création du thread pour la loco 0
     std::unique_ptr<Launchable> locoBehaveA = std::make_unique<LocomotiveBehavior>(
         locoA, sharedSection, sharedStation, priorityLocoA);
-
+    // Création du thread pour la loco 1
     std::unique_ptr<Launchable> locoBehaveB = std::make_unique<LocomotiveBehavior>(
         locoB, sharedSection, sharedStation, priorityLocoB);
 
