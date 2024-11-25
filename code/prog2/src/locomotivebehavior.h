@@ -26,8 +26,7 @@ public:
      */
     LocomotiveBehavior(Locomotive &loco,
                        std::shared_ptr<SharedSectionInterface> sharedSection,
-                       std::shared_ptr<SharedStation> sharedStation,
-                       int priority)
+                       std::shared_ptr<SharedStation> sharedStation)
         : loco(loco), sharedSection(sharedSection), sharedStation(sharedStation) {
         randPriority();
     }

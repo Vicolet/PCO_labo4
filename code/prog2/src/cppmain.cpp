@@ -104,16 +104,16 @@ int cmain() {
     std::shared_ptr<SharedStation> sharedStation = std::make_shared<SharedStation>(2);
 
     // Priorités des locomotives
-    int priorityLocoA = 1; // Priorité plus élevée
-    int priorityLocoB = 2; // Priorité plus basse
+    //int priorityLocoA = 1; // Priorité plus élevée
+    //int priorityLocoB = 2; // Priorité plus basse
 
     // Création des threads avec les priorités
     // Création du thread pour la loco 0
     std::unique_ptr<Launchable> locoBehaveA = std::make_unique<LocomotiveBehavior>(
-        locoA, sharedSection, sharedStation, priorityLocoA);
+        locoA, sharedSection, sharedStation);
     // Création du thread pour la loco 1
     std::unique_ptr<Launchable> locoBehaveB = std::make_unique<LocomotiveBehavior>(
-        locoB, sharedSection, sharedStation, priorityLocoB);
+        locoB, sharedSection, sharedStation);
 
     // Lanchement des threads
     afficher_message(qPrintable(QString("Lancement thread loco A (numéro %1)").arg(locoA.numero())));

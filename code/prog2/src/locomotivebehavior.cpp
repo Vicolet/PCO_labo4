@@ -16,7 +16,7 @@ void LocomotiveBehavior::run() {
 
     int nbTours = 0;
     bool directionAvant = true; // Direction de déplacement
-    const int maxTours = (loco.numero() == 7) ? 2 : 1; // N2 pour loco 7, N1 pour loco 42
+    const int maxTours = (loco.numero() == 7) ? 1 : 1; // N2 pour loco 7, N1 pour loco 42
 
     while (!PcoThread::thisThread()->stopRequested()) {
         if (directionAvant) {
