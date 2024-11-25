@@ -21,14 +21,28 @@ class SharedStation;
 class LocomotiveBehavior : public Launchable {
 public:
     /*!
-     * \brief locomotiveBehavior Constructeur de la classe
-     * \param loco la locomotive dont on représente le comportement
+     * @brief locomotiveBehavior Constructeur de la classe
+     * @param loco la locomotive dont on représente le comportement
      */
     LocomotiveBehavior(Locomotive &loco,
                        std::shared_ptr<SharedSectionInterface> sharedSection,
                        std::shared_ptr<SharedStation> sharedStation,
                        int priority)
-        : loco(loco), sharedSection(sharedSection), sharedStation(sharedStation), priority(priority) {
+        : loco(loco), sharedSection(sharedSection), sharedStation(sharedStation) {
+        randPriority();
+    }
+
+    /**
+    * @brief RandPriority Génère une priorité aléatoire pour la locomotive.
+    *
+    * Cette fonction attribue une priorité aléatoire à l'objet loco. La priorité est générée
+    * en utilisant un générateur de nombres aléatoires avec une distribution uniforme entre 0 et 10.
+    */
+    void randPriority() {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, 10);
+        this->loco.priority = dis(gen);
     }
 
 protected:

@@ -22,7 +22,9 @@ public:
         : semaphoreSection(0),
           mutexSection(1),
           estOccupee(false),
-          priorityMode(PriorityMode::HIGH_PRIORITY) {}
+          priorityMode(PriorityMode::HIGH_PRIORITY),
+          locomotivesEnAttente(0) {
+    }
 
     /**
      * @brief Une locomotive demande l'accès à la section avec une priorité donnée.
@@ -35,6 +37,7 @@ public:
         afficher_message(qPrintable(QString("Locomotive %1 demande l'accès avec priorité %2.")
                                     .arg(loco.numero())
                                     .arg(priority)));
+        locomotivesEnAttente++; // Une locomotive en attente de notification
         mutexSection.release();
     }
 
@@ -46,18 +49,23 @@ public:
      */
     void access(Locomotive& loco, int priority) override {
         mutexSection.acquire();
+
+        // Boucle d'attente tant que les conditions d'accès ne sont pas remplies
         while (estOccupee || !canAccess(priority, loco.numero())) {
             loco.arreter();
             loco.afficherMessage("En attente d'accès à la section partagée...");
+            locomotivesEnAttente++; // Une locomotive entre en attente
             mutexSection.release();
-            semaphoreSection.acquire(); // Attend qu'une notification soit envoyée
-            mutexSection.acquire();
+
+            semaphoreSection.acquire(); // Attend une notification
+            mutexSection.acquire(); // Réacquérir le mutex pour vérifier les conditions
         }
 
-        // La locomotive a la priorité et peut accéder
+        // La locomotive peut accéder à la section
         estOccupee = true;
         currentLoco = loco.numero();
         removeRequest(loco.numero());
+        locomotivesEnAttente--; // La locomotive n'est plus en attente
         loco.demarrer();
         afficher_message(qPrintable(QString("Locomotive %1 accède à la section partagée.").arg(loco.numero())));
         mutexSection.release();
@@ -73,9 +81,10 @@ public:
         estOccupee = false;
         currentLoco = -1;
 
-        // Notifie une autre locomotive en attente
-        if (!requests.empty()) {
+        // Notifie une locomotive en attente uniquement si nécessaire
+        if (locomotivesEnAttente > 0) {
             semaphoreSection.release();
+            locomotivesEnAttente--; // Une locomotive a été notifiée
         }
         afficher_message(qPrintable(QString("Locomotive %1 quitte la section partagée.").arg(loco.numero())));
         mutexSection.release();
@@ -114,7 +123,7 @@ private:
      * @param locoId Le numéro de la locomotive à retirer.
      */
     void removeRequest(int locoId) {
-        std::priority_queue<std::pair<int, int>> tempQueue;
+        std::priority_queue<std::pair<int, int> > tempQueue;
         while (!requests.empty()) {
             auto [priority, id] = requests.top();
             requests.pop();
@@ -128,9 +137,10 @@ private:
     bool estOccupee; ///< Indique si la section est occupée
     int currentLoco = -1; ///< Numéro de la locomotive actuelle dans la section
     PriorityMode priorityMode; ///< Mode de gestion des priorités
+    int locomotivesEnAttente; ///< Nombre de locomotives en attente d'accès
     PcoSemaphore semaphoreSection; ///< Sémaphore pour gérer les locomotives en attente
     PcoSemaphore mutexSection; ///< Mutex pour protéger les ressources critiques
-    std::priority_queue<std::pair<int, int>> requests; ///< File des demandes d'accès
+    std::priority_queue<std::pair<int, int> > requests; ///< File des demandes d'accès
 };
 
 #endif // SHAREDSECTION_H

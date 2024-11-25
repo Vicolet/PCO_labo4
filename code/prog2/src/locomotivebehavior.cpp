@@ -34,6 +34,8 @@ void LocomotiveBehavior::run() {
 void LocomotiveBehavior::moveForward(int& nbTours, int maxTours, bool& directionAvant) {
     if (loco.numero() == 42) {
         // Logique pour la loco 42 en marche avant
+        attendre_contact(29);
+        sharedSection->request(loco, loco.priority);
         attendre_contact(22);
         sharedSection->access(loco, priority);
         attendre_contact(12);
@@ -41,14 +43,19 @@ void LocomotiveBehavior::moveForward(int& nbTours, int maxTours, bool& direction
         attendre_contact(1);
     } else if (loco.numero() == 7) {
         // Logique pour la loco 7 en marche avant
+        attendre_contact(33);
+        sharedSection->request(loco, priority);
+
         attendre_contact(25);
         sharedSection->access(loco, priority);
         diriger_aiguillage(10, DEVIE, 0);
         diriger_aiguillage(13, DEVIE, 0);
+
         attendre_contact(15);
         diriger_aiguillage(10, TOUT_DROIT, 0);
         diriger_aiguillage(13, TOUT_DROIT, 0);
         sharedSection->leave(loco);
+
         attendre_contact(5);
     }
 
@@ -59,6 +66,7 @@ void LocomotiveBehavior::moveForward(int& nbTours, int maxTours, bool& direction
         directionAvant = false; // Changer de direction
         nbTours = 0;
         sharedStation->waitingAtStation(loco);
+        randPriority();
         sharedSection->togglePriorityMode(); // Bascule le mode de priorité
     }
 }
@@ -66,18 +74,26 @@ void LocomotiveBehavior::moveForward(int& nbTours, int maxTours, bool& direction
 void LocomotiveBehavior::moveBackward(int& nbTours, int maxTours, bool& directionAvant) {
     if (loco.numero() == 42) {
         // Logique pour la loco 42 en marche arrière
+        attendre_contact(3);
+        sharedSection->request(loco, loco.priority);
         attendre_contact(11);
-        sharedSection->access(loco, priority);
+
+        sharedSection->access(loco, loco.priority);
         attendre_contact(20);
+
         sharedSection->leave(loco);
         attendre_contact(1);
     } else if (loco.numero() == 7) {
         // Logique pour la loco 7 en marche arrière
+        attendre_contact(6);
+        sharedSection->request(loco, loco.priority);
         attendre_contact(14);
-        sharedSection->access(loco, priority);
+
+        sharedSection->access(loco, loco.priority);
         diriger_aiguillage(10, DEVIE, 0);
         diriger_aiguillage(13, DEVIE, 0);
         attendre_contact(24);
+
         sharedSection->leave(loco);
         diriger_aiguillage(10, TOUT_DROIT, 0);
         diriger_aiguillage(13, TOUT_DROIT, 0);
@@ -91,6 +107,7 @@ void LocomotiveBehavior::moveBackward(int& nbTours, int maxTours, bool& directio
         directionAvant = true; // Changer de direction
         nbTours = 0;
         sharedStation->waitingAtStation(loco);
+        randPriority();
         sharedSection->togglePriorityMode(); // Bascule le mode de priorité
     }
 }
