@@ -24,7 +24,7 @@ La variable `locosEnAttente` indique si des locomotives sont actuellement en att
 
 Cela illustre un usage efficace des sémaphores pour synchroniser plusieurs threads sur une ressource partagée.
 
-### Gestion de l'accès au tronçon commun
+### Gestion de l'accès au tronçon critique
 
 La classe `SharedSection` représente un tronçon partagé du réseau ferroviaire. Ce tronçon est une ressource critique qui ne peut être utilisée que par une locomotive à la fois. L’objectif principal de cette classe est de garantir l’exclusion mutuelle dans l’accès à cette section.
 
@@ -35,14 +35,60 @@ Ce mécanisme évite les conditions de course (data races) et garantit une synch
 
 ### Gestion de la priorité
 
-## Tests effectués A CHANGER SELON LA SITUATION
+Les priorités sont attribuées aléatoirement grâce à la méthode `randPriority()`. Cela permet de simuler une variation dynamique des priorités entre les locomotives. La classe `SharedSection` implémente également une méthode `togglePriorityMode()` pour basculer entre deux modes de gestion :
+
+- HIGH_PRIORITY : Les locomotives avec les priorités les plus élevées sont servies en premier.
+- LOW_PRIORITY : Les locomotives avec les priorités les plus basses sont servies en premier.
+
+Le mode de priorité est basculé à intervalles réguliers après un nombre défini de tours.
+
+### Comportement des locomotives
+
+La classe `LocomotiveBehavior` définit les actions de chaque locomotive. Elle repose sur deux méthodes principales :
+
+`moveForward()` : Déplace la locomotive dans la direction avant, en respectant les points de contact et en configurant les aiguillages.
+`moveBackward()` : Déplace la locomotive dans la direction arrière.
+
+Chaque méthode suit ces étapes :
+
+1. Attente au point de contact d'entrée.
+2. Demande d'accès au tronçon critique (`request()`).
+3. Accès au tronçon critique une fois les conditions remplies (`access()`).
+4. Configuration des aiguillages si nécessaire.
+5. Quitte le tronçon et notifie les autres locomotives (`leave()`).
+6. Attente à la gare après un certain nombre de tours (`waitingAtStation()`).
+
+## Tests effectués
 
 Nous avons exécuté notre programme en gardant l'inertie et laissé quelques tours pour vérifier que toutes les contraintes étaient fonctionnelles.
 
-D'abord on voit que la priorité et l'attente sont respecté, la loco 42 attend bien avant l'entrée de la section critique et part dès que la loco 7 a quitté la section critique.
+### Test 1 : Priorité plus élevée pour la locomotive 42
 
+D'abord on voit que la priorité et l'attente sont respecté, la loco 42 prend la priorité et donc la loco 7 attend bien avant l'entrée de la section critique et part dès que la loco 42 a quitté la section critique.
 
-Nous voyons ici que la loco 7 arrivant après, est bien laissée prioritaire pour la section critique.
+![priorité](/imgs/priorité.png)
+
+### Test 2 : Priorités plus élevée pour la locomotive 42 et attente de la loco 7
+
+Nous voyons ici que la loco 42 arrivant après, est bien laissée prioritaire pour la section critique.
+
+![priorité](/imgs/priorité_attente.png)
+
+### Test 3 : Aiguillages dynamiques
 
 On voit également que les aiguillages 13 et 10 ont bien été switchés pour cette loco.
+
 ![aiguillage](/imgs/aiguillage.png)
+
+
+### Test 4 : Réinitialisation des aiguillages
+
+Ils sont bien remis en place quand la loco 7 est hors de la section critique.
+
+![aiguillage](/imgs/aiguillage_reset.png)
+
+### Test 5 : Gestion de l'attente en gare
+
+On voit ici que la loco 42 attend bien en gare après 2 tours.
+
+![attente](/imgs/attente.png)
