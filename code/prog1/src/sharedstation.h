@@ -27,7 +27,6 @@ public:
   void waitingAtStation(Locomotive &loco);
 
 private:
-  /* TODO */
   PcoSemaphore semaphoreAttenteStation; // Sémaphore pour gérer l'attente des locomotives
   PcoSemaphore mutex;  // Sémaphore pour gérer l'entrée des locomotives
   bool locosEnAttente; // Indique si des locomotives attendent à la station

@@ -26,7 +26,6 @@ public:
    * partagée. Initialisez vos éventuels attributs ici, sémaphores etc.
    */
   SharedSection() : semaphoreSection(0), mutexSection(1), estOccupee(false) {
-    // TODO
   }
 
   /**
@@ -39,7 +38,6 @@ public:
    * @param loco La locomotive qui essaie d'accéder à la section partagée
    */
   void access(Locomotive &loco) override {
-    // TODO
     mutexSection.acquire(); 
 
     while (estOccupee) {
@@ -62,7 +60,6 @@ public:
    * @param loco La locomotive qui quitte la section partagée
    */
   void leave(Locomotive &loco) override {
-    // TODO
     mutexSection.acquire(); 
     estOccupee = false;
     semaphoreSection.release();
